@@ -2,6 +2,24 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.2] - 2026-10-09
+
+Fixes every finding of Anthropic's plugin directory validation.
+
+### Added
+
+- A listing icon, `.claude-plugin/icon.png`.
+- A README section describing every event the plugin hooks and what it does there.
+
+### Changed
+
+- bidi-js is now its original ES module source, unmodified, in place of its bundled build. Unicode conformance is unchanged: 91,707 of 91,707.
+- The plugin keeps its settings in its own store and redraws when they change, so `plugin.json` no longer needs a `types` field.
+
+### Removed
+
+- The cross-platform CI jobs that needed a Claude Code token, and the `ci/` scripts. `checks.yml` keeps the strict validation, the tests and the conformance test, and uses no secrets.
+
 ## [1.0.1] - 2026-10-09
 
 ### Added
@@ -28,5 +46,6 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.2]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.2
 [1.0.1]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.1
 [1.0.0]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.0

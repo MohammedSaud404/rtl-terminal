@@ -6,7 +6,7 @@
 
 Arabic · Hebrew · Persian · Urdu · and every other right-to-left script
 
-[![checks](https://github.com/MohammedSaud404/rtl-terminal/actions/workflows/platforms.yml/badge.svg)](https://github.com/MohammedSaud404/rtl-terminal/actions/workflows/platforms.yml)
+[![checks](https://github.com/MohammedSaud404/rtl-terminal/actions/workflows/checks.yml/badge.svg)](https://github.com/MohammedSaud404/rtl-terminal/actions/workflows/checks.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unicode BidiCharacterTest](https://img.shields.io/badge/Unicode%20bidi%20test-91%2C707%20%2F%2091%2C707-brightgreen.svg)](#how-it-works)
 
@@ -86,7 +86,7 @@ It works on its own. These commands change it, and every choice is remembered ac
 | GNOME Terminal, Konsole | ➖ Left to the terminal: every line reads left-to-right |
 | xterm | ❌ No right-to-left support in the terminal itself |
 
-**Why the difference.** In Windows Terminal, conhost and VS Code's terminal, Claude Code reorders right-to-left text itself, and that is the step this plugin controls. In other macOS and Linux terminals, Claude Code hands the text to the terminal's own bidi engine and strips the Unicode direction marks on the way, so no standard control can reach that engine. There the plugin steps aside and changes nothing. Every row of this table is checked on GitHub Actions, with screenshots of real terminals.
+**Why the difference.** In Windows Terminal, conhost and VS Code's terminal, Claude Code reorders right-to-left text itself, and that is the step this plugin controls. In other macOS and Linux terminals, Claude Code hands the text to the terminal's own bidi engine and strips the Unicode direction marks on the way, so no standard control can reach that engine. There the plugin steps aside and changes nothing. Every row of this table was verified during development, with screenshots of real terminals on Windows, macOS and Linux.
 
 ## How it works
 
@@ -106,7 +106,15 @@ rtl-terminal only changes how text is drawn on your screen.
 - **Sends nothing.** It makes no network requests, runs no commands, reads or writes no files, and has no telemetry.
 - **Reads** the text Claude Code gives it to draw (replies, your messages, and your draft in the input box, for the preview), only to lay it out on screen, plus the `OS` and `TERM_PROGRAM` environment variables, to tell which terminal it runs in.
 - **Stores** its own three settings (on or off, the input preview, the mode) in Claude Code's plugin storage on your machine.
-- **Ships readable source**, including [bidi-js](https://github.com/lojjic/bidi-js) unmodified, and downloads nothing at install or run time.
+- **Ships readable source**, including the original source of [bidi-js](https://github.com/lojjic/bidi-js), unmodified, and downloads nothing at install or run time.
+
+### What it hooks
+
+- `ui.render`, for Claude's replies, your messages and the band above the input box: draws right-to-left paragraphs laid out, and leaves everything else to Claude Code.
+- `prompt.edit`: reads your draft after each edit, to draw the preview. The edit itself goes on unchanged.
+- `prompt.submit`: clears the preview when you send. Your prompt goes on unchanged.
+- `command.run`: answers its own `/rtl` command, and no other.
+- `session.start`: loads its settings, adds `/rtl`, and while a preview is shown, checks the input box every 0.3 seconds so the preview clears with the box.
 
 ## FAQ
 
@@ -134,11 +142,11 @@ node scripts/conformance.mjs
 claude --plugin-dir .
 ```
 
-`.github/workflows/platforms.yml` validates and tests the plugin on every push. Started by hand, it also renders Claude Code on Linux and macOS and screenshots xterm, mlterm, Konsole, GNOME Terminal and Terminal.app; those jobs need a `CLAUDE_CODE_OAUTH_TOKEN` secret, from `claude setup-token`.
+`.github/workflows/checks.yml` runs the strict validation, the tests and the Unicode conformance test on every push and pull request.
 
 ## Credits
 
-[bidi-js](https://github.com/lojjic/bidi-js) 1.0.3 by Jason Johnston (MIT), vendored unmodified in `hooks/vendor/`.
+[bidi-js](https://github.com/lojjic/bidi-js) 1.0.3 by Jason Johnston (MIT): its original source, vendored unmodified in `hooks/vendor/bidi-js/`.
 
 ## License
 

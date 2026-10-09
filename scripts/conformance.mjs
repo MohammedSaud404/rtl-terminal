@@ -1,4 +1,4 @@
-// Checks the vendored bidi-js against Unicode's own conformance test,
+// Checks the vendored bidi-js source against Unicode's own conformance test,
 // BidiCharacterTest.txt: the resolved level of every character and the
 // visual order of every line.
 //
@@ -7,13 +7,8 @@
 //   node scripts/conformance.mjs ./BidiCharacterTest.txt
 
 import { existsSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath, pathToFileURL } from 'node:url'
 
-const here = dirname(fileURLToPath(import.meta.url))
-const libUrl = pathToFileURL(join(here, '..', 'hooks', 'vendor', 'bidi.mjs')).href
-const { default: bidiFactory } = await import(libUrl)
-const bidi = bidiFactory()
+import * as bidi from '../hooks/vendor/bidi-js/index.js'
 
 const arg = process.argv[2] ?? '17.0.0'
 const source = existsSync(arg)

@@ -3,17 +3,15 @@
 
 import { LRM, RLM } from '../hooks/bidi'
 import type { Span } from '../hooks/markdown'
-import bidiFactory from '../hooks/vendor/bidi.mjs'
-
-const bidi = bidiFactory()
+import { getEmbeddingLevels, getReorderSegments } from '../hooks/vendor/bidi-js/index.js'
 
 // Claude Code's own on Windows terminals: reorders by the rules, base
 // direction from the first strong character, mirrors nothing.
 export function drawn(row: Span[]): string {
   const text = row.map(span => span.text).join('')
   const chars = text.split('')
-  const embedding = bidi.getEmbeddingLevels(text)
-  for (const [start, end] of bidi.getReorderSegments(text, embedding)) {
+  const embedding = getEmbeddingLevels(text)
+  for (const [start, end] of getReorderSegments(text, embedding)) {
     chars.splice(start, end - start + 1, ...chars.slice(start, end + 1).reverse())
   }
   return chars.filter(ch => ch !== RLM && ch !== LRM).join('')

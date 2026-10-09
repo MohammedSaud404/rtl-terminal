@@ -1,4 +1,3 @@
-import { atom, read, update } from 'claude-code'
 import type { Elements as SurfaceElements, EngineInterface, Register } from 'claude-code'
 
 import { LRM } from './bidi'
@@ -7,11 +6,6 @@ import type { Block, RtlBlock, Span } from './markdown'
 import { layoutPlainText, needsPreview, previewRows } from './preview'
 import { asMode, reorderedBy } from './target'
 import type { Mode } from './target'
-
-const isEnabled = atom({ plugin: 'rtl-terminal', key: 'isEnabled' } as const, true)
-const isPreviewOn = atom({ plugin: 'rtl-terminal', key: 'isPreviewOn' } as const, true)
-const draft = atom({ plugin: 'rtl-terminal', key: 'draft' } as const, '')
-const whoReorders = atom({ plugin: 'rtl-terminal', key: 'reorderedBy' } as const, 'claude')
 
 // Cells the transcript keeps left of a reply's text for its `●` mark.
 const MESSAGE_GUTTER = 2
@@ -145,19 +139,24 @@ async function resolveReorderedBy($: EngineInterface, mode: Mode): Promise<'clau
   return reorderedBy(mode, { os, termProgram })
 }
 
-// Lays rows out only where Claude Code reorders them, and only when on.
-async function isLaidOut($: EngineInterface): Promise<boolean> {
-  return (await read($, isEnabled)) && (await read($, whoReorders)) === 'claude'
-}
-
 export const register: Register = on => {
+  // The session's settings, loaded from the plugin's store when the session
+  // starts (and again on every reload); a change redraws what they shape.
+  let isEnabled = true
+  let isPreviewOn = true
+  let whoReorders: 'claude' | 'terminal' = 'claude'
+  let draft = ''
+
+  // Lays rows out only where Claude Code reorders them, and only when on.
+  const isLaidOut = () => isEnabled && whoReorders === 'claude'
+
   on('session.start', async ($, e, next) => {
     const saved = await $.store.get('isEnabled')
-    if (typeof saved === 'boolean') await update($, isEnabled, () => saved)
+    if (typeof saved === 'boolean') isEnabled = saved
     const savedPreview = await $.store.get('isPreviewOn')
-    if (typeof savedPreview === 'boolean') await update($, isPreviewOn, () => savedPreview)
-    const resolved = await resolveReorderedBy($, asMode(await $.store.get('mode')))
-    await update($, whoReorders, () => resolved)
+    if (typeof savedPreview === 'boolean') isPreviewOn = savedPreview
+    whoReorders = await resolveReorderedBy($, asMode(await $.store.get('mode')))
+    $.ui.invalidate('ui.render')
 
     await $.command.register({
       name: 'rtl',
@@ -166,10 +165,11 @@ export const register: Register = on => {
     })
 
     $.clock.every(PREVIEW_CHECK_MS, async () => {
-      const shown = await read($, draft)
-      if (shown === '') return
+      if (draft === '') return
       const box = await $.prompt.read()
-      if (box.text !== shown) await update($, draft, () => box.text)
+      if (box.text === draft) return
+      draft = box.text
+      $.ui.invalidate('ui.render')
     })
 
     return next(e)
@@ -183,11 +183,11 @@ export const register: Register = on => {
       if (words.length > 2 || (asked !== undefined && asMode(asked) !== asked)) return { text: HELP }
       const mode = asMode(asked ?? (await $.store.get('mode')))
       await $.store.set('mode', mode)
-      const resolved = await resolveReorderedBy($, mode)
-      await update($, whoReorders, () => resolved)
+      whoReorders = await resolveReorderedBy($, mode)
+      $.ui.invalidate('ui.render')
       return {
         text:
-          resolved === 'claude'
+          whoReorders === 'claude'
             ? `RTL mode is ${mode}: Claude Code reorders RTL rows here, and the plugin lays them out.`
             : `RTL mode is ${mode}: this terminal reorders RTL rows itself, and the plugin leaves them to it.`,
       }
@@ -202,40 +202,45 @@ export const register: Register = on => {
     const choose = (current: boolean) => (arg === 'on' ? true : arg === 'off' ? false : !current)
 
     if (isInput) {
-      const value = choose(await read($, isPreviewOn))
-      await update($, isPreviewOn, () => value)
-      await $.store.set('isPreviewOn', value)
-      return { text: `RTL input preview is ${value ? 'on' : 'off'}.` }
+      isPreviewOn = choose(isPreviewOn)
+      await $.store.set('isPreviewOn', isPreviewOn)
+      $.ui.invalidate('ui.render')
+      return { text: `RTL input preview is ${isPreviewOn ? 'on' : 'off'}.` }
     }
 
-    const value = choose(await read($, isEnabled))
-    await update($, isEnabled, () => value)
-    await $.store.set('isEnabled', value)
-    return { text: `RTL layout is ${value ? 'on' : 'off'}.` }
+    isEnabled = choose(isEnabled)
+    await $.store.set('isEnabled', isEnabled)
+    $.ui.invalidate('ui.render')
+    return { text: `RTL layout is ${isEnabled ? 'on' : 'off'}.` }
   })
 
+  // Reads the draft after each edit, for the preview; the edit itself goes on
+  // unchanged.
   on('prompt.edit', async ($, e, next) => {
     const box = await next(e)
-    await update($, draft, () => box.text)
+    draft = box.text
+    $.ui.invalidate('ui.render')
     return box
   }).catch(($, e, next) => next(e))
 
+  // Clears the preview once a prompt is sent; the prompt itself goes on
+  // unchanged.
   on('prompt.submit', async ($, e, next) => {
-    await update($, draft, () => '')
+    draft = ''
+    $.ui.invalidate('ui.render')
     return next(e)
   }).catch(($, e, next) => next(e))
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.surface !== 'terminal' || e.props.hasSurvey) return next(e)
-    const text = await read($, draft)
-    if (!(await isLaidOut($)) || !(await read($, isPreviewOn))) return next(e)
-    if (!needsPreview(text, e.props.bodyColumns - 4)) return next(e)
+    if (!isLaidOut() || !isPreviewOn) return next(e)
+    if (!needsPreview(draft, e.props.bodyColumns - 4)) return next(e)
 
-    return drawPreview($.ui.resolve(e), text, e.props.bodyColumns, e.props.maxRows)
+    return drawPreview($.ui.resolve(e), draft, e.props.bodyColumns, e.props.maxRows)
   })
 
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
-    if (e.surface !== 'terminal' || !(await isLaidOut($))) return next(e)
+    if (e.surface !== 'terminal' || !isLaidOut()) return next(e)
 
     const blocks = splitBlocks(e.props.text)
     if (!blocks) return next(e)
@@ -246,7 +251,7 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'UserMessage' }, async ($, e, next) => {
-    if (e.surface !== 'terminal' || !(await isLaidOut($))) return next(e)
+    if (e.surface !== 'terminal' || !isLaidOut()) return next(e)
 
     const columns = e.viewport?.columns ?? 80
     const text = layoutPlainText(e.props.text, Math.max(20, columns - PROMPT_ROW_CHROME))

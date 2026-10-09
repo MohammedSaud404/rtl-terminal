@@ -1,7 +1,7 @@
 // Character facts the layout needs: bidi strength, display width, and the
 // levels the Unicode Bidirectional Algorithm gives a right-to-left paragraph.
 
-import bidiFactory from './vendor/bidi.mjs'
+import { getEmbeddingLevels, getMirroredCharactersMap } from './vendor/bidi-js/index.js'
 import { WIDE_RANGES } from './wide'
 
 export const RLM = '\u200F'
@@ -194,14 +194,12 @@ export function fixTypedBrackets(chars: string[], editable: boolean[]): void {
   })
 }
 
-const bidi = bidiFactory()
-
 /**
  * The levels the full Unicode Bidirectional Algorithm gives each UTF-16 unit
  * of a paragraph of base direction RTL (odd right-to-left, even
  * left-to-right), and the characters those levels draw mirrored.
  */
 export function resolveRtl(text: string): { levels: Uint8Array; mirrors: Map<number, string> } {
-  const embedding = bidi.getEmbeddingLevels(text, 'rtl')
-  return { levels: embedding.levels, mirrors: bidi.getMirroredCharactersMap(text, embedding.levels) }
+  const embedding = getEmbeddingLevels(text, 'rtl')
+  return { levels: embedding.levels, mirrors: getMirroredCharactersMap(text, embedding.levels) }
 }
