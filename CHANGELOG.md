@@ -8,7 +8,7 @@ Fixes every finding of Anthropic's plugin directory validation.
 
 ### Added
 
-- A listing icon, `.claude-plugin/icon.png`.
+- A listing icon for the plugin directory.
 - A README section describing every event the plugin hooks and what it does there.
 
 ### Changed
