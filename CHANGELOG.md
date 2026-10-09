@@ -2,6 +2,12 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-10-09
+
+### Changed
+
+- The directory listing's documentation link opens the README's usage section. Linking the installation guide made the directory hold the plugin for review, because the guide links the README and the README shows screenshots.
+
 ## [1.0.3] - 2026-10-09
 
 ### Added
@@ -52,6 +58,7 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.4]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.4
 [1.0.3]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.3
 [1.0.2]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.2
 [1.0.1]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.1
