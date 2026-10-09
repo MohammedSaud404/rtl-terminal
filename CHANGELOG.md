@@ -2,6 +2,17 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-10-09
+
+### Added
+
+- A privacy and security section in the README: the plugin sends nothing, runs no commands, and stores only its own settings.
+- `displayName`, `homepage`, `repository` and `keywords` in `plugin.json`, as Anthropic's plugin directory asks.
+
+### Removed
+
+- `.gitattributes`, whose line-ending rewrite the directory's validation refuses.
+
 ## [1.0.0] - 2026-10-09
 
 The first release.
@@ -17,4 +28,5 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.1]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.1
 [1.0.0]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.0

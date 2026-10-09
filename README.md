@@ -99,6 +99,15 @@ For each right-to-left paragraph, the plugin:
 3. Pins each run of a line between two invisible marks of its direction (RLM or LRM), and mirrors brackets at right-to-left levels, so Claude Code's simpler reordering lands exactly on the standard result.
 4. Draws the lines right-aligned, with bullets and numbers on the right.
 
+## Privacy and security
+
+rtl-terminal only changes how text is drawn on your screen.
+
+- **Sends nothing.** It makes no network requests, runs no commands, reads or writes no files, and has no telemetry.
+- **Reads** the text Claude Code gives it to draw (replies, your messages, and your draft in the input box, for the preview), only to lay it out on screen, plus the `OS` and `TERM_PROGRAM` environment variables, to tell which terminal it runs in.
+- **Stores** its own three settings (on or off, the input preview, the mode) in Claude Code's plugin storage on your machine.
+- **Ships readable source**, including [bidi-js](https://github.com/lojjic/bidi-js) unmodified, and downloads nothing at install or run time.
+
 ## FAQ
 
 **Copying a reply gives scrambled text.**
