@@ -1,0 +1,107 @@
+name: platforms
+
+# checks run on every push. The rest needs Claude Code signed in (the
+# CLAUDE_CODE_OAUTH_TOKEN secret, from `claude setup-token`) and runs only
+# when started by hand: gh workflow run platforms.yml
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CLAUDE_CODE_VERSION: 2.1.294
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}
+      - run: claude plugin validate .
+      - run: claude plugin test .
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      - run: node scripts/conformance.mjs
+
+  # What Claude Code writes to a terminal on Linux and macOS: does it reorder
+  # RTL text itself, as on Windows, and how does the plugin's layout land?
+  render:
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install -g @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}
+      - run: pip install ptyprocess==0.7.0 pyte==0.8.2
+      - run: python ci/render.py run out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: render-${{ matrix.os }}
+          path: out/
+
+  # What people see: screenshots of real terminals on a virtual display.
+  screens-linux:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb dbus-x11 imagemagick \
+            xterm mlterm konsole gnome-terminal \
+            fonts-noto-core fonts-noto-mono fonts-noto-color-emoji fonts-dejavu-core
+      - run: |
+          umask 077
+          printf 'export CLAUDE_CODE_OAUTH_TOKEN=%q PATH=%q\n' "$CLAUDE_CODE_OAUTH_TOKEN" "$PATH" > "$HOME/.rtl-ci.env"
+          python3 ci/render.py prepare
+      - run: bash ci/screens-linux.sh screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-linux
+          path: screens/
+
+  screens-macos:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    continue-on-error: true
+    env:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}
+      - run: |
+          umask 077
+          printf 'export CLAUDE_CODE_OAUTH_TOKEN=%q PATH=%q\n' "$CLAUDE_CODE_OAUTH_TOKEN" "$PATH" > "$HOME/.rtl-ci.env"
+          python3 ci/render.py prepare
+      - run: bash ci/screens-macos.sh screens
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-macos
+          path: screens/

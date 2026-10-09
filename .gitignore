@@ -1,0 +1,4 @@
+.claude-plugin/types/
+node_modules/
+# Written by Claude Code when it loads the plugin from this folder.
+tsconfig.json

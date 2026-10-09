@@ -1,0 +1,6 @@
+{
+  "name": "rtl-terminal",
+  "description": "Right-to-left layout for Arabic, Hebrew, Persian, Urdu and every RTL language in the Claude Code terminal",
+  "owner": { "name": "MohammedSaud404" },
+  "plugins": [{ "name": "rtl-terminal", "source": "./" }]
+}
