@@ -10,7 +10,7 @@ Arabic · Hebrew · Persian · Urdu · and every other right-to-left script
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Unicode BidiCharacterTest](https://img.shields.io/badge/Unicode%20bidi%20test-91%2C707%20%2F%2091%2C707-brightgreen.svg)](#how-it-works)
 
-[العربية](README.ar.md)
+[Installation guide](docs/INSTALL.md) · [Changelog](CHANGELOG.md) · [العربية](README.ar.md)
 
 <img src="docs/images/hero.png" alt="The same Arabic reply in Claude Code, without rtl-terminal (left-aligned, bullets on the left, brackets backwards) and with it (right-aligned, bullets on the right, brackets correct)" width="820">
 
@@ -63,7 +63,7 @@ In Claude Code, run:
 
 Answer `y` to add the marketplace, then pick the user scope. The plugin is active right away and in every new session.
 
-Requires Claude Code 2.1.294 or later.
+Requires Claude Code 2.1.294 or later. The [installation guide](docs/INSTALL.md) covers the command line, updates, uninstalling and troubleshooting.
 
 ## Usage
 
