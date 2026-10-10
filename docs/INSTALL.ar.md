@@ -96,6 +96,9 @@ claude plugin marketplace remove rtl-terminal
 **لم يتغيّر شيء بعد التثبيت.**
 الجلسة التي كانت مفتوحة أثناء التثبيت تحتاج إلى `/reload-plugins`، أو إلى إعادة التشغيل.
 
+**لا يظهر إصلاح من إصدار أحدث.**
+نفّذ `claude plugin list`. إذا ظهرت rtl-terminal أكثر من مرة، كأن يضمّ برنامج تثبيت نسخته الخاصة منها، فإن Claude Code لا يشغّل إلا النسخة التي ثُبّتت قبل غيرها. احتفظ بالنسخة `rtl-terminal@rtl-terminal`، وأزِل البقية بالأمر `claude plugin uninstall` متبوعًا بأسمائها (مثلًا `claude plugin uninstall rtl-terminal@launchpad-plugins`)، ثم أعد تشغيل Claude Code.
+
 **لم يُعثر على الـ marketplace أو الإضافة.**
 تأكّد من كتابة `MohammedSaud404/rtl-terminal` بشكل صحيح، ثم نفّذ `claude plugin marketplace update rtl-terminal`.
 

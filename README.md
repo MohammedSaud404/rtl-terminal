@@ -65,6 +65,8 @@ Answer `y` to add the marketplace, then pick the user scope. The plugin is activ
 
 Requires Claude Code 2.1.294 or later. The [installation guide](docs/INSTALL.md) covers the command line, updates, uninstalling and troubleshooting.
 
+Already have rtl-terminal from another source, such as an installer that bundles it? Claude Code runs only the copy installed first, so remove that one before installing: find its name with `claude plugin list`, then run `claude plugin uninstall` with it (for example `claude plugin uninstall rtl-terminal@launchpad-plugins`).
+
 ## Usage
 
 It works on its own. These commands change it, and every choice is remembered across sessions:
@@ -104,7 +106,7 @@ For each right-to-left paragraph, the plugin:
 rtl-terminal only changes how text is drawn on your screen.
 
 - **Sends nothing.** It makes no network requests, runs no commands, reads or writes no files, and has no telemetry.
-- **Reads** the text Claude Code gives it to draw (replies, your messages, and your draft in the input box, for the preview), only to lay it out on screen, plus the `OS` and `TERM_PROGRAM` environment variables, to tell which terminal it runs in.
+- **Reads** the text Claude Code gives it to draw (replies, your messages, and your draft in the input box, for the preview), only to lay it out on screen, plus the `OS`, `TERM_PROGRAM`, `WT_SESSION`, `TERMINAL_EMULATOR` and `FORCE_HYPERLINK` environment variables, to tell which terminal it runs in and whether that terminal shows clickable links.
 - **Stores** its own three settings (on or off, the input preview, the mode) in Claude Code's plugin storage on your machine.
 - **Ships readable source**, including the original source of [bidi-js](https://github.com/lojjic/bidi-js), unmodified, and downloads nothing at install or run time.
 

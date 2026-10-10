@@ -2,6 +2,16 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.6] - 2026-10-10
+
+### Added
+
+- The README and the installation guide explain what to do when rtl-terminal is installed from more than one source, such as an installer that bundles its own copy: Claude Code runs only the copy installed first.
+
+### Fixed
+
+- In terminals where Claude Code can't show clickable links, such as conhost (the old Windows console) and VS Code's terminal, a link in a right-to-left reply was printed twice and pushed the next row out of place. The plugin now writes such links out itself, as Claude Code does there: a web address once, and a named link as its text followed by the address in brackets. Windows Terminal is unchanged. Reported by noambrand.
+
 ## [1.0.5] - 2026-10-10
 
 ### Fixed
@@ -64,6 +74,7 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.6]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.6
 [1.0.5]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.5
 [1.0.4]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.4
 [1.0.3]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.3

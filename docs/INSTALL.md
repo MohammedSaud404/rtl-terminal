@@ -72,6 +72,9 @@ Run `/rtl mode`. If it says the terminal reorders RTL rows, you're in a terminal
 **Nothing changed after installing.**
 A session that was open during the install needs `/reload-plugins`, or a restart.
 
+**A fix from a newer version doesn't show.**
+Run `claude plugin list`. If rtl-terminal is listed more than once, for example because an installer bundled its own copy, Claude Code runs only the copy installed first. Keep `rtl-terminal@rtl-terminal`, uninstall the others with `claude plugin uninstall` and their names (such as `claude plugin uninstall rtl-terminal@launchpad-plugins`), then restart Claude Code.
+
 **The marketplace or the plugin isn't found.**
 Check the spelling `MohammedSaud404/rtl-terminal`, then run `claude plugin marketplace update rtl-terminal`.
 
