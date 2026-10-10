@@ -2,6 +2,12 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [1.0.5] - 2026-10-10
+
+### Fixed
+
+- While the preview of an RTL draft shows, the band above the input box keeps what Claude Code and other plugins draw there, with the preview under it. Before, the preview took the band's place and hid other plugins' rows, such as usage or warnings. Reported by karanb192.
+
 ## [1.0.4] - 2026-10-09
 
 ### Changed
@@ -58,6 +64,7 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.5]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.5
 [1.0.4]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.4
 [1.0.3]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.3
 [1.0.2]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.2

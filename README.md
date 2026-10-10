@@ -110,7 +110,7 @@ rtl-terminal only changes how text is drawn on your screen.
 
 ### What it hooks
 
-- `ui.render`, for Claude's replies, your messages and the band above the input box: draws right-to-left paragraphs laid out, and leaves everything else to Claude Code.
+- `ui.render`, for Claude's replies, your messages and the band above the input box: draws right-to-left paragraphs laid out, puts the preview under whatever else the band shows, and leaves everything else to Claude Code.
 - `prompt.edit`: reads your draft after each edit, to draw the preview. The edit itself goes on unchanged.
 - `prompt.submit`: clears the preview when you send. Your prompt goes on unchanged.
 - `command.run`: answers its own `/rtl` command, and no other.

@@ -1,4 +1,4 @@
-import type { Elements as SurfaceElements, EngineInterface, Register } from 'claude-code'
+import type { Elements as SurfaceElements, EngineInterface, Register, RenderElement } from 'claude-code'
 
 import { LRM } from './bidi'
 import { itemMarker, layoutRtl, parseInline, splitBlocks } from './markdown'
@@ -121,6 +121,19 @@ function drawPreview(els: Elements, text: string, width: number, maxRows: number
   )
 }
 
+// The band above the prompt is shared with the engine and other plugins: what
+// they draw there stays, and the preview goes under it, next to the prompt.
+export function drawBand(els: Elements, beneath: RenderElement, text: string, width: number, maxRows: number) {
+  const { Box } = els
+
+  return (
+    <Box flexDirection="column">
+      {beneath}
+      {drawPreview(els, text, width, maxRows)}
+    </Box>
+  )
+}
+
 const HELP = [
   'Usage: /rtl [on | off]       RTL layout of replies',
   '       /rtl input [on | off] live preview of an RTL draft above the prompt',
@@ -236,7 +249,8 @@ export const register: Register = on => {
     if (!isLaidOut() || !isPreviewOn) return next(e)
     if (!needsPreview(draft, e.props.bodyColumns - 4)) return next(e)
 
-    return drawPreview($.ui.resolve(e), draft, e.props.bodyColumns, e.props.maxRows)
+    const beneath = await next(e)
+    return drawBand($.ui.resolve(e), beneath, draft, e.props.bodyColumns, e.props.maxRows)
   })
 
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
