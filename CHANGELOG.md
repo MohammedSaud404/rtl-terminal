@@ -2,6 +2,12 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Punctuation that opens a Latin word in a right-to-left reply stays on the word's left: the slash of a slash command written outside backticks (`/rtl off`), a flag (`--model`), a file type (`.env`) or a path (`~/notes`). Before, the Unicode Bidirectional Algorithm gave it the paragraph's direction and drew it on the word's far side, as in `rtl off/`. Punctuation inside a word, as in `and/or` or `ב-Windows`, is unchanged. Reported by noambrand.
+
 ## [1.0.6] - 2026-10-10
 
 ### Added
