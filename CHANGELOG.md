@@ -2,11 +2,11 @@
 
 All notable changes to rtl-terminal are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.7] - 2026-10-11
 
 ### Fixed
 
-- Punctuation that opens a Latin word in a right-to-left reply stays on the word's left: the slash of a slash command written outside backticks (`/rtl off`), a flag (`--model`), a file type (`.env`) or a path (`~/notes`). Before, the Unicode Bidirectional Algorithm gave it the paragraph's direction and drew it on the word's far side, as in `rtl off/`. Punctuation inside a word, as in `and/or` or `ב-Windows`, is unchanged. Reported by noambrand.
+- Punctuation that opens a Latin word in a right-to-left reply stays on the word's left: the slash of a slash command written outside backticks (`/rtl off`), a flag (`--model`), a file type (`.env`) or a path (`~/notes`). Before, the Unicode Bidirectional Algorithm gave it the paragraph's direction and drew it on the word's far side, as in `rtl off/`. Punctuation inside a word, as in `and/or` or `ב-Windows`, is unchanged. Reported and fixed by noambrand.
 
 ## [1.0.6] - 2026-10-10
 
@@ -80,6 +80,7 @@ The first release.
 - `/rtl`, `/rtl on|off` and `/rtl mode auto|claude|terminal`, remembered across sessions.
 - Automatic detection of where Claude Code reorders RTL text itself (Windows Terminal, conhost, VS Code's terminal); the plugin steps aside in other terminals.
 
+[1.0.7]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.7
 [1.0.6]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.6
 [1.0.5]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.5
 [1.0.4]: https://github.com/MohammedSaud404/rtl-terminal/releases/tag/rtl-terminal--v1.0.4
